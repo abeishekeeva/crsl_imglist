@@ -4,12 +4,12 @@ const bodyParser = require("body-parser");
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const { Pool, Client } = require('pg');
 const $ = require('jquery');
 const cheerio = require('cheerio');
 const fs = require('fs');
-var app = express();
+const app = express();
 
+const db = require('./db.js');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -21,45 +21,26 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/public')));
 
-
+var html;
+var file = fs.readFile('index.html', function(err, data) {
+    html = data;
+})
 
 app.get('/:crslid', function(req, res) {
 
-    const client = new Client({
-        user: 'vnovqzkarihdxs',
-        host: 'ec2-54-227-240-7.compute-1.amazonaws.com',
-        database: 'd1cq3r067e15oc',
-        password: '9b30ec1b3b582cbf20c4e1437bffc93c5bc9c4d72f40fdd2da4f2cf1dd701f58',
-        port: 5432,
-    })
-
-
     const results = [];
 
-    var imgSrc = '';
-    client.connect((err) => {
+    db.query('select i.img_src from public."Images" i, public."Carousel" c where i.img_crsl_id = c.crsl_id and c.crsl_id =' + req.params.crslid + ';', (err, result) => {
         if (err) {
-            console.error('connection error', err.stack)
-        } else {
+            console.log('connection error', err.stack)
+        } else
 
-            client.query('select i.img_src from public."Images" i, public."Carousel" c where i.img_crsl_id = c.crsl_id and c.crsl_id =' + req.params.crslid + ';', (err, res) => {
-                if (err) {
-                    console.log(err)
-                } else
-
-                    for (let each in res.rows) {
-                        results.push(res.rows[each]);
-                    }
-                    client.end();
-            })
-        }
-    })
-
-    client.on('end', function() {
+            for (let each in result.rows) {
+                results.push(result.rows[each]);
+            }
 
 
-        fs.readFile('index.html', function(err, data) {
-            var $ = cheerio.load(data);
+            var $ = cheerio.load(html);
             $('h1').text('Image List for Carousel ' + req.params.crslid);
             $('h1').addClass('welcome');
 
@@ -71,11 +52,10 @@ app.get('/:crslid', function(req, res) {
             res.set('Content-Type', 'text/html; charset=utf-8');
             res.send($.html());
 
-        })
-
     })
 
 })
+
 
 
 module.exports = app;

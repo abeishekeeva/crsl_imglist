@@ -21,10 +21,22 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/public')));
 
-var html;
-var file = fs.readFile('index.html', function(err, data) {
-    html = data;
-})
+var html = '<!DOCTYPE html>\n' + '<html>\n' + '<head>\n' + '    <meta charset="UTF-8">\n' +
+    '    <title>Sample Site</title>\n' + '\n' +
+    '    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">\n' +
+    '    <link rel="stylesheet" href="./stylesheets/style.css">\n' +
+    '    <style>\n' +
+    '        body { padding-top:30px; }\n' +
+    '    </style>\n' +
+    '</head>\n' +
+    '<body>\n' + '\n' +
+    '<div>\n' +
+    '    <h1 style="text-align: center;" class="jumbotron"> </h1>\n' +
+    '    <div id="imgbox" class="container">\n' +
+    '        <div >\n' + '\n' + '        </div>\n' +
+    '    </div>\n' + '</div>\n' + '\n' + '</body>\n' +
+    '</html>'
+
 
 app.get('/:crslid', function(req, res) {
 
@@ -39,7 +51,6 @@ app.get('/:crslid', function(req, res) {
                 results.push(result.rows[each]);
             }
 
-
             var $ = cheerio.load(html);
             $('h1').text('Image List for Carousel ' + req.params.crslid);
             $('h1').addClass('welcome');
@@ -53,9 +64,7 @@ app.get('/:crslid', function(req, res) {
             res.send($.html());
 
     })
-
 })
-
 
 
 module.exports = app;

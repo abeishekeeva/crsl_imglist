@@ -38,7 +38,7 @@ app.get('/:crslid', function(req, res) {
 
     db.query('select i.img_src from public."Images" i, public."Carousel" c where i.img_crsl_id = c.crsl_id and c.crsl_id =' + parseInt(req.params.crslid) + ';', (err, result) => {
         if (err) {
-            console.log('connection error: ', err.stack)
+            console.log('connection error: ', err.stack);
         } else
 
             for (let each in result.rows) {
@@ -54,7 +54,7 @@ app.get('/:crslid', function(req, res) {
                 var img = "<img src=" + results[i]["img_src"] + ">";
                 $('#imgbox').prepend(img);
             }
-            console.log(results);
+
             res.set('Content-Type', 'text/html; charset=utf-8');
             res.send($.html());
 

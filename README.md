@@ -23,3 +23,4 @@ npm i
 ```
 and make sure you have the corresponding tables with appropriate fields as written above.
 
+![Screenshot](crsl.png)

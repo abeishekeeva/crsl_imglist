@@ -22,3 +22,4 @@ If you want to run the project local please install all modules by running
 npm i
 ```
 and make sure you have the corresponding tables with appropriate fields as written above.
+
